@@ -1,5 +1,5 @@
 # DataGuard: PostgreSQL Integrity Shield
-> **Cyber Security • Data Integrity • Auto-Patching • POPIA Compliance**
+> **Cyber Security, Data Integrity, Auto-Patching, POPIA Compliance**
 
 [[PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-336791?style=flat&logo=postgresql)](https://www.postgresql.org/)
 [[React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?style=flat&logo=react)](https://vitejs.dev/)
@@ -7,13 +7,13 @@
 [[Nobara](https://img.shields.io/badge/OS-Nobara%20KDE-000000?style=flat)](https://nobaraproject.org/)
 [[Integrity](https://img.shields.io/badge/Integrity_Score-87%2F100-00ff87?style=flat)](#)
 
-**A WORM-protected, hash-chained PostgreSQL integrity monitoring & auto-healing platform with CIS Benchmark auto-patcher — built on Nobara Linux KDE.**
+**A WORM-protected, hash-chained PostgreSQL integrity monitoring and auto-healing platform with CIS Benchmark auto-patcher, built on Nobara Linux KDE.**
 
-Built for my **Ethical Hacker certification** journey — focuses on **protecting data integrity and patching threats** in real production databases.
+Built for my **Ethical Hacker certification** journey, focuses on **protecting data integrity and patching threats** in real production databases.
 
-### 🎯 What it does
+### What it does
 
-Production DB (5432) is constantly at risk: insider tamper, SQL injection modifying rows, privilege escalation. DataGuard detects it in **<2 minutes** and auto-heals from PITR recovery instance (5433).
+Production DB (5432) is constantly at risk: insider tamper, SQL injection modifying rows, privilege escalation. DataGuard detects it in **under 2 minutes** and auto-heals from PITR recovery instance (5433).
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -24,18 +24,18 @@ Production DB (5432) is constantly at risk: insider tamper, SQL injection modify
 │  ┌─────────────┐        ┌──────────┐       ┌──────────────────┐     │
 │  │ customers   │───────▶│ SHA256   │──────▶│ integrity_ledger │     │
 │  │ orders      │ UPDATE │ hash=    │ INSERT│ id | table | hash│     │
-│  │ products    │        │ old→new  │       │ prev_hash chain  │     │
+│  │ products    │        │ old->new │       │ prev_hash chain  │     │
 │  └─────────────┘        └──────────┘       │ WORM: No UPDATE │     │
-│         ▲                                  │       /DELETE    │     │
+│         ^                                  │       /DELETE    │     │
 │         │         DETECTOR (every 60s)     └──────────────────┘     │
 │         │        ┌─────────────────────┐            │              │
 │         │        │ Compare PROD hash   │            │              │
 │         │        │ vs LEDGER hash      │────────────┘              │
-│         │        │ Mismatch? →         │                           │
+│         │        │ Mismatch? ->        │                           │
 │         │        │ security_events     │                           │
 │         │        └─────────────────────┘                           │
 │         │                    │                                     │
-│         │                    ▼                                     │
+│         │                    v                                     │
 │         │        ┌─────────────────────┐   ┌──────────────────┐    │
 │         └────────│ HEALER              │◀──│ REC DB :5433     │    │
 │                  │ SELECT good row     │   │ PITR Recovery    │    │
@@ -44,52 +44,52 @@ Production DB (5432) is constantly at risk: insider tamper, SQL injection modify
 │                  │ row = good row      │   │ backups/         │    │
 │                  └─────────────────────┘   └──────────────────┘    │
 │                            │                                       │
-│                            ▼                                       │
+│                            v                                       │
 │                  ┌─────────────────────┐                           │
 │                  │ MERKLE ROOT         │                           │
 │                  │ Daily snapshot      │                           │
 │                  │ root = hash(all    │                           │
-│                  │ rows) → O(1) verify │                          │
+│                  │ rows) -> O(1) verify│                          │
 │                  └─────────────────────┘                           │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### 📸 Dashboard Visual
+### Dashboard Visual
 
-Dark Konsole theme built for Nobara KDE — Green #00ff87 on #232629
+Dark Konsole theme built for Nobara KDE, Green #00ff87 on #232629
 
 **Dashboard Features:**
-- **Integrity Score 87/100** — Big green circle with health
-- **Tables (12)** — Card grid with green OK / red TAMPERED dots
-- **Security Events (3)** — CRITICAL red / HIGH orange table with Heal button
-- **Integrity Ledger** — WORM-protected hash chain: `hash | prev_hash | txid | user`
-- **Patches (15)** — CIS Benchmark auto-patcher + POPIA Sec 19 mapping
-- **Merkle Roots** — Daily Merkle tree snapshot for O(1) table verification
+- **Integrity Score 87/100**, Big green circle with health
+- **Tables (12)**, Card grid with green OK and red TAMPERED dots
+- **Security Events (3)**, CRITICAL red and HIGH orange table with Heal button
+- **Integrity Ledger**, WORM-protected hash chain: hash, prev_hash, txid, user
+- **Patches (15)**, CIS Benchmark auto-patcher plus POPIA Sec 19 mapping
+- **Merkle Roots**, Daily Merkle tree snapshot for O(1) table verification
 
-> Screenshot: `Dashboard - DataGuard Integrity Score: 87/100` — Tables Status: customers 12,450 OK, orders 89,320 TAMPERED (auto-healed from 5433)
+> Screenshot: Dashboard - DataGuard Integrity Score 87/100, Tables Status: customers 12,450 OK, orders 89,320 TAMPERED (auto-healed from 5433)
 
-### 🔒 Security Features
+### Security Features
 
 | Feature | Implementation | Resume Keyword |
 |---------|---------------|--------------|
-| **WORM Ledger** | Trigger `prevent_ledger_tamper()` raises EXCEPTION on UPDATE/DELETE | Tamper-evident logging |
-| **Hash Chain** | `prev_hash = previous row hash` — any deletion breaks chain | Blockchain-inspired integrity |
-| **Tamper Detection** | Trigger on UPDATE/DELETE → `security_events` with old_hash → new_hash | Real-time IDS |
-| **Auto-Healing** | Heal from recovery instance 5433: `SELECT * FROM rec WHERE id = prod.id` | Incident Response |
-| **Merkle Tree** | Daily `merkle_roots` — `root = hash(all rows)` — O(1) table verify | Cryptographic verification |
-| **CIS Patcher** | `cis_checks` + `security_patches` — scans `pg_hba.conf`, auto-fixes trust → md5 | CIS Benchmark L1 |
-| **POPIA Compliance** | Every patch maps to POPIA Act Sec 17,19,20 — ZA data law | Compliance Engineering |
+| **WORM Ledger** | Trigger prevent_ledger_tamper() raises EXCEPTION on UPDATE and DELETE | Tamper-evident logging |
+| **Hash Chain** | prev_hash equals previous row hash, any deletion breaks chain | Blockchain-inspired integrity |
+| **Tamper Detection** | Trigger on UPDATE and DELETE creates security_events with old_hash to new_hash | Real-time IDS |
+| **Auto-Healing** | Heal from recovery instance 5433: SELECT star FROM rec WHERE id equals prod.id | Incident Response |
+| **Merkle Tree** | Daily merkle_roots, root equals hash(all rows), O(1) table verify | Cryptographic verification |
+| **CIS Patcher** | cis_checks plus security_patches, scans pg_hba.conf, auto-fixes trust to md5 | CIS Benchmark L1 |
+| **POPIA Compliance** | Every patch maps to POPIA Act Sec 17,19,20, ZA data law | Compliance Engineering |
 
-### 🛠️ Tech Stack
+### Tech Stack
 
 - **OS:** Nobara Linux KDE (Konsole)
-- **DB:** PostgreSQL 18 — PROD 5432 + REC 5433 (PITR with 6 base backups in `/var/lib/pgsql/backups/`)
-- **Backend:** Python FastAPI + psycopg2, SHA256 row hashing
-- **Frontend:** React + Vite — Dark theme #232629 / #00ff87
-- **Security:** pg_hba.conf trust→md5, public schema hardening, superuser audit
-- **Tooling:** DBeaver 26.2.3, pg_basebackup, WAL archive `/var/lib/pgsql/wal_archive/`
+- **DB:** PostgreSQL 18, PROD 5432 plus REC 5433 (PITR with 6 base backups in /var/lib/pgsql/backups/)
+- **Backend:** Python FastAPI plus psycopg2, SHA256 row hashing
+- **Frontend:** React plus Vite, Dark theme #232629 and #00ff87
+- **Security:** pg_hba.conf trust to md5, public schema hardening, superuser audit
+- **Tooling:** DBeaver 26.2.3, pg_basebackup, WAL archive /var/lib/pgsql/wal_archive/
 
-### 📁 Folder Structure
+### Folder Structure
 
 ```
 DataGuard/
@@ -105,19 +105,19 @@ DataGuard/
 │   │   ├── healer.py         # Heal from 5433
 │   │   └── merkle.py         # Merkle root calc
 │   ├── db/
-│   │   ├── connection.py     # 5432 + 5433 connections
+│   │   ├── connection.py     # 5432 plus 5433 connections
 │   │   └── schema.sql        # 5 tables: ledger, events, patches, cis, merkle
 │   └── main.py               # FastAPI app
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/
-│   │   │   ├── Dashboard.jsx         # 87/100 + 4 cards
+│   │   │   ├── Dashboard.jsx         # 87/100 plus 4 cards
 │   │   │   ├── TablesView.jsx        # 12 tables grid
 │   │   │   ├── SecurityEvents.jsx    # 3 OPEN CRITICAL
 │   │   │   ├── IntegrityLedger.jsx   # WORM chain
 │   │   │   ├── Patches.jsx           # CIS 87/100
 │   │   │   └── MerkleView.jsx        # Merkle O(1)
-│   │   ├── api/dataguard.js          # Mock → real API
+│   │   ├── api/dataguard.js          # Mock to real API
 │   │   └── App.jsx
 │   └── vite.config.js
 ├── scripts/
@@ -127,12 +127,12 @@ DataGuard/
 └── README.md
 ```
 
-### 🚀 Quick Start (Nobara KDE)
+### Quick Start (Nobara KDE)
 
 ```bash
 # Clone
-git clone https://github.com/lucas-The-Coder/DataGuard.git
-cd DataGuard
+git clone https://github.com/lucas-The-Coder/DataGuard-PostgreSQL-Integrity-Shield.git
+cd DataGuard-PostgreSQL-Integrity-Shield
 
 # Backend
 cd backend
@@ -152,7 +152,7 @@ npm run dev
 # REC: 5433 - psql -h /tmp -p 5433 -U luked -d your_app_db (clone from PITR)
 ```
 
-### 🧪 How to Test Tamper Detection
+### How to Test Tamper Detection
 
 ```sql
 -- In PROD 5432
@@ -167,22 +167,22 @@ SELECT * FROM dblink('dbname=your_app_db port=5433', 'SELECT * FROM customers WH
 -- Dashboard: customers back to GREEN OK
 ```
 
-### 📈 Resume Bullet
+### Resume Bullet
 
-> **DataGuard: PostgreSQL Integrity Shield** — Built WORM-protected, hash-chained integrity ledger with real-time tamper detection and auto-healing from PITR recovery instance (5432→5433). Implemented Merkle tree O(1) verification, CIS Benchmark auto-patcher with POPIA mapping, achieving Integrity Score 87/100. Stack: PostgreSQL 18, FastAPI, React+Vite, Nobara Linux. [github.com/lucas-The-Coder/DataGuard](https://github.com/lucas-The-Coder/DataGuard)
+> **DataGuard: PostgreSQL Integrity Shield**, Built WORM-protected, hash-chained integrity ledger with real-time tamper detection and auto-healing from PITR recovery instance (5432 to 5433). Implemented Merkle tree O(1) verification, CIS Benchmark auto-patcher with POPIA mapping, achieving Integrity Score 87/100. Stack: PostgreSQL 18, FastAPI, React plus Vite, Nobara Linux. [github.com/lucas-The-Coder/DataGuard-PostgreSQL-Integrity-Shield](https://github.com/lucas-The-Coder/DataGuard-PostgreSQL-Integrity-Shield)
 
-### 🗺️ Roadmap
+### Roadmap
 
-- [x] Frontend Dashboard (6 pages) — mock data
-- [ ] Backend FastAPI → real 5432/5433 data
-- [ ] Trigger + WORM + Hash chain
-- [ ] Detector every 60s + Healer
+- [x] Frontend Dashboard (6 pages), mock data
+- [ ] Backend FastAPI to real 5432 and 5433 data
+- [ ] Trigger plus WORM plus Hash chain
+- [ ] Detector every 60s plus Healer
 - [ ] Merkle daily snapshot
-- [ ] CIS scanner + auto-patcher (CIS-3.1, 3.2, 4.5)
+- [ ] CIS scanner plus auto-patcher (CIS-3.1, 3.2, 4.5)
 
-### 📝 License
+### License
 
-MIT — Built by Luke Dennis (lucas-The-Coder) on Nobara KDE for Ethical Hacker certification.
+MIT, Built by Luke Dennis (lucas-The-Coder) on Nobara KDE for Ethical Hacker certification.
 
 ---
-**Nobara • KDE • Konsole • PostgreSQL 18 • DBeaver 26.2.3 • PROD 5432 | REC 5433**
+**Nobara, KDE, Konsole, PostgreSQL 18, DBeaver 26.2.3, PROD 5432 and REC 5433**
