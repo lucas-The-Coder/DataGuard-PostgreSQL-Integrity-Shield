@@ -1,0 +1,7 @@
+body {
+  margin: 0;
+  background: #232629;
+  color: #fff;
+  font-family: 'JetBrains Mono', 'Noto Mono', monospace;
+}
+#root { min-height: 100vh; }
